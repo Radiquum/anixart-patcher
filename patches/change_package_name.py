@@ -1,6 +1,6 @@
 """Change package name"""
 
-priority = -10
+priority = -100
 
 import os
 from typing import TypedDict
