@@ -1,0 +1,8 @@
+.python-venv
+.venv
+apks
+original
+tools
+decompiled
+dist
+__pycache__

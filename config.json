@@ -1,0 +1,15 @@
+{
+    "tools": [
+        {
+            "tool": "apktool.jar",
+            "url": "https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.12.0.jar"
+        }
+    ],
+    "folders": {
+        "tools": "./tools",
+        "apks": "./apks",
+        "decompiled": "./decompiled",
+        "patches": "./patches",
+        "dist": "./dist"
+    }
+}
