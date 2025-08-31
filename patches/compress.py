@@ -1,4 +1,4 @@
-"""Remove and Compress unnecessary resources"""
+"""Remove unnecessary resources"""
 
 priority = 0
 from tqdm import tqdm

@@ -1,4 +1,4 @@
-"""Remove and Compress unnecessary resources"""
+"""Change package name"""
 
 priority = -10
 from tqdm import tqdm
