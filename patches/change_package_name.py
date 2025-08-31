@@ -1,10 +1,8 @@
 """Change package name"""
 
 priority = -10
-from tqdm import tqdm
 
 import os
-import shutil
 from typing import TypedDict
 
 class PatchConfig_ChangePackageName(TypedDict):
