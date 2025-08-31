@@ -69,19 +69,25 @@ def apply_patches(patches: list[str]) -> list[PatchStatus]:
         )
         modules.append(Patch(name, module))
     modules.sort(key=lambda x: x.package.priority, reverse=True)
-
-    for patch in tqdm(modules, colour="green", desc="patching apk"):
-        tqdm.write(f"patch apply: {patch.name}")
-        conf = {}
-        if os.path.exists(f"{config['folders']['patches']}/{patch.name}.config.json"):
-            with open(
-                f"{config['folders']['patches']}/{patch.name}.config.json",
-                "r",
-                encoding="utf-8",
-            ) as conf:
-                conf = json.loads(conf.read())
-        conf["src"] = config["folders"]["decompiled"]
-        status = patch.apply(conf)
-        statuses.append({"name": patch.name, "status": status})
+    
+    with tqdm(
+        total=len(modules),
+        unit="patch",
+        unit_divisor=1,
+    ) as bar:
+        for patch in modules:
+            bar.set_description(f"{patch.name}")
+            conf = {}
+            if os.path.exists(f"{config['folders']['patches']}/{patch.name}.config.json"):
+                with open(
+                    f"{config['folders']['patches']}/{patch.name}.config.json",
+                    "r",
+                    encoding="utf-8",
+                ) as conf:
+                    conf = json.loads(conf.read())
+            conf["src"] = config["folders"]["decompiled"]
+            status = patch.apply(conf)
+            statuses.append({"name": patch.name, "status": status})
+            bar.update()
 
     return statuses
