@@ -86,7 +86,6 @@ def apply_patches(patches: list[str]) -> list[PatchStatus]:
                 ) as conf:
                     conf = json.loads(conf.read())
             conf["src"] = config["folders"]["decompiled"]
-            conf["patches"] = patches
             status = patch.apply(conf)
             statuses.append({"name": patch.name, "status": status})
             bar.update()
