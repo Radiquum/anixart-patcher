@@ -79,6 +79,12 @@ def compile_apk(apk: str):
 
 def sign_apk(apk: str):
     log.info(f"sign and align apk: `{apk}`")
+
+    if os.path.exists(f"{config['folders']['dist']}/{apk.removesuffix('.apk')}-aligned.apk"):
+        os.remove(f"{config['folders']['dist']}/{apk.removesuffix('.apk')}-aligned.apk")
+    if os.path.exists(f"{config['folders']['dist']}/{apk.removesuffix('.apk')}-aligned-signed.apk"):
+        os.remove(f"{config['folders']['dist']}/{apk.removesuffix('.apk')}-aligned-signed.apk")
+
     command = ""
     try:
         command = (
