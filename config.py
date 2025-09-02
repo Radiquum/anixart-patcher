@@ -30,18 +30,31 @@ class ConfigFolders(TypedDict):
     dist: str
 
 
+class ConfigXmlNS(TypedDict):
+    android: str
+    app: str
+
+
 class Config(TypedDict):
+    log_level: str
     tools: list[ConfigTools]
     folders: ConfigFolders
+    xml_ns: ConfigXmlNS
 
 
 def load_config() -> Config:
+    config = None
+
     if not os.path.exists("config.json"):
         log.exception("file `config.json` is not found!")
         exit(1)
 
     with open("./config.json", "r", encoding="utf-8") as file:
-        return json.loads(file.read())
+        config = json.loads(file.read())
+
+    log.setLevel(config.get("log_level", "NOTSET").upper())
+
+    return config
 
 
 config = load_config()

@@ -1,22 +1,22 @@
 """Remove beta banner"""
 
+# patch settings
+# priority, default: 0
 priority = 0
+
+# imports
+## bundled
 import os
-from tqdm import tqdm
+
+## installed
 from lxml import etree
 
-from typing import TypedDict
+## custom
+from config import config, log
 
 
-class PatchConfig_DisableBetaBanner(TypedDict):
-    src: str
-
-
-def apply(config: PatchConfig_DisableBetaBanner) -> bool:
-    xml_ns = {
-        "android": "http://schemas.android.com/apk/res/android",
-        "app": "http://schemas.android.com/apk/res-auto",
-    }
+def apply(__no_config__) -> bool:
+    beta_banner_xml = f"{config['folders']['decompiled']}/res/layout/item_beta.xml"
     attributes = [
         "paddingTop",
         "paddingBottom",
@@ -27,19 +27,23 @@ def apply(config: PatchConfig_DisableBetaBanner) -> bool:
         "layout_marginTop",
         "layout_marginBottom",
         "layout_marginStart",
-        "layout_marginEnd"
+        "layout_marginEnd",
     ]
 
-    beta_banner_xml = f"{config['src']}/res/layout/item_beta.xml"
     if os.path.exists(beta_banner_xml):
         parser = etree.XMLParser(remove_blank_text=True)
         tree = etree.parse(beta_banner_xml, parser)
         root = tree.getroot()
-        
+
         for attr in attributes:
-            tqdm.write(f"set {attr} = 0.0dip")
-            root.set(f"{{{xml_ns['android']}}}{attr}", "0.0dip")
+            log.debug(
+                f"[DISABLE_BETA_BANNER] set attribute `{attr}` from `{root.get(attr)}` to `0.0dip`"
+            )
+            root.set(f"{{{config['xml_ns']['android']}}}{attr}", "0.0dip")
 
-        tree.write(beta_banner_xml, pretty_print=True, xml_declaration=True, encoding="utf-8")
+        tree.write(
+            beta_banner_xml, pretty_print=True, xml_declaration=True, encoding="utf-8"
+        )
 
+    log.debug(f"[DISABLE_BETA_BANNER] file {beta_banner_xml} has been modified")
     return True

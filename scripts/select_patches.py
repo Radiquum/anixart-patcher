@@ -1,8 +1,10 @@
 import os, json
 import importlib
 from typing import TypedDict
+
 from beaupy import select_multiple
-from tqdm import tqdm
+from rich.progress import BarColumn, Progress, TextColumn
+
 from config import config, log, console
 
 
@@ -59,6 +61,14 @@ class PatchStatus(TypedDict):
     status: bool
 
 
+progress = Progress(
+    "[progress.description]{task.description}",
+    TextColumn(text_format="{task.fields[patch]}"),
+    BarColumn(bar_width=None),
+    "[blue]{task.completed}/{task.total}",
+)
+
+
 def apply_patches(patches: list[str]) -> list[PatchStatus]:
     modules = []
     statuses = []
@@ -69,25 +79,27 @@ def apply_patches(patches: list[str]) -> list[PatchStatus]:
         )
         modules.append(Patch(name, module))
     modules.sort(key=lambda x: x.package.priority, reverse=True)
-    
-    with tqdm(
-        total=len(modules),
-        unit="patch",
-        unit_divisor=1,
-    ) as bar:
-        for patch in modules:
-            bar.set_description(f"{patch.name}")
-            conf = {}
-            if os.path.exists(f"{config['folders']['patches']}/{patch.name}.config.json"):
+
+    with progress:
+        task = progress.add_task("applying patch:", total=len(modules), patch="")
+        for module in modules:
+            progress.update(task, patch=module.name)
+
+            patch_conf = {}
+            if os.path.exists(
+                f"{config['folders']['patches']}/{module.name}.config.json"
+            ):
                 with open(
-                    f"{config['folders']['patches']}/{patch.name}.config.json",
+                    f"{config['folders']['patches']}/{module.name}.config.json",
                     "r",
                     encoding="utf-8",
-                ) as conf:
-                    conf = json.loads(conf.read())
-            conf["src"] = config["folders"]["decompiled"]
-            status = patch.apply(conf)
-            statuses.append({"name": patch.name, "status": status})
-            bar.update()
+                ) as f:
+                    patch_conf = json.loads(f.read())
+
+            status = module.apply(patch_conf)
+            statuses.append({"name": module.name, "status": status})
+            progress.update(task, advance=1)
+
+        progress.update(task, description="patches applied", patch="")
 
     return statuses

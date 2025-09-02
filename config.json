@@ -1,4 +1,5 @@
 {
+    "log_level": "INFO",
     "tools": [
         {
             "tool": "apktool.jar",
@@ -11,5 +12,9 @@
         "decompiled": "./decompiled",
         "patches": "./patches",
         "dist": "./dist"
+    },
+    "xml_ns": {
+        "android": "http://schemas.android.com/apk/res/android",
+        "app": "http://schemas.android.com/apk/res-auto"
     }
 }

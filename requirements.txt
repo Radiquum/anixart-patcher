@@ -1,5 +1,4 @@
 requests
-tqdm
 lxml
 rich
 beaupy

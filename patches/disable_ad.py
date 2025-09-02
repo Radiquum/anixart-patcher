@@ -1,8 +1,12 @@
 """Disable ad banners"""
 
+# patch settings
+# priority, default: 0
 priority = 0
-from typing import TypedDict
 
+# imports
+## custom
+from config import config, log
 from scripts.smali_parser import (
     find_smali_method_end,
     find_smali_method_start,
@@ -11,10 +15,7 @@ from scripts.smali_parser import (
 )
 
 
-class PatchConfig_DisableAdBanner(TypedDict):
-    src: str
-
-
+# Patch
 replace = """    .locals 0
 
     const/4 p0, 0x1
@@ -23,9 +24,10 @@ replace = """    .locals 0
 """
 
 
-def apply(config: PatchConfig_DisableAdBanner) -> bool:
-    path = f"{config['src']}/smali_classes2/com/swiftsoft/anixartd/Prefs.smali"
+def apply(__no_config__) -> bool:
+    path = f"{config['folders']['decompiled']}/smali_classes2/com/swiftsoft/anixartd/Prefs.smali"
     lines = get_smali_lines(path)
+
     for index, line in enumerate(lines):
         if line.find("IS_SPONSOR") >= 0:
             method_start = find_smali_method_start(lines, index)
@@ -33,7 +35,8 @@ def apply(config: PatchConfig_DisableAdBanner) -> bool:
             new_content = replace_smali_method_body(
                 lines, method_start, method_end, replace
             )
-
             with open(path, "w", encoding="utf-8") as file:
                 file.writelines(new_content)
+
+    log.debug(f"[DISABLE_AD] file {path} has been modified")
     return True

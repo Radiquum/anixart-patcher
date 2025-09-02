@@ -1,7 +1,28 @@
-import requests
 import os
-from tqdm import tqdm
-from config import config, log
+import requests
+import logging
+from config import config, log, console
+from rich.progress import (
+    BarColumn,
+    DownloadColumn,
+    Progress,
+    TextColumn,
+    TimeRemainingColumn,
+    TransferSpeedColumn,
+)
+
+progress = Progress(
+    TextColumn("[bold blue]{task.fields[filename]}", justify="right"),
+    BarColumn(bar_width=None),
+    "[progress.percentage]{task.percentage:>3.1f}%",
+    "•",
+    DownloadColumn(),
+    "•",
+    TransferSpeedColumn(),
+    "•",
+    TimeRemainingColumn(),
+    console=console
+)
 
 
 def check_if_tool_exists(tool: str) -> bool:
@@ -19,27 +40,30 @@ def check_if_tool_exists(tool: str) -> bool:
     else:
         return True
 
+requests_log = logging.getLogger("urllib3.connectionpool")
+requests_log.setLevel(logging.WARNING)
 
 def download_tool(url: str, tool: str):
     if not check_if_tool_exists(tool):
-        log.info(f"downloading a tool: `{tool}`")
+        progress.start()
+        
         try:
+            log.info(f"Requesting {url}")
             response = requests.get(url, stream=True)
-            total = int(response.headers.get("content-length", 0))
-            with open(f"{config['folders']['tools']}/{tool}", "wb") as file, tqdm(
-                desc=tool,
-                total=total,
-                unit="iB",
-                unit_scale=True,
-                unit_divisor=1024,
-            ) as bar:
-                for bytes in response.iter_content(chunk_size=8192):
+            total = int(response.headers.get("content-length", None))
+            task_id = progress.add_task("download", start=False, total=total, filename=tool)
+
+            with open(f"{config['folders']['tools']}/{tool}", "wb") as file:
+                progress.start_task(task_id)
+                for bytes in response.iter_content(chunk_size=32768):
                     size = file.write(bytes)
-                    bar.update(size)
+                    progress.update(task_id, advance=size)
+
             log.info(f"`{tool}` downloaded")
         except Exception as e:
             log.error(f"error while downloading `{tool}`: {e}")
 
+        progress.stop()
 
 def check_and_download_all_tools():
     for tool in config["tools"]:

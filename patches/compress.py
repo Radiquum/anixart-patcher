@@ -1,25 +1,45 @@
 """Remove unnecessary resources"""
 
+# patch settings
+# priority, default: 0
 priority = 0
-from tqdm import tqdm
 
+# imports
+## bundled
 import os
 import shutil
 from typing import TypedDict
 
+## installed
+from rich.progress import track
+
+## custom
+from config import config, log, console
+
+
+# Patch
+
 class PatchConfig_Compress(TypedDict):
-    src: str
     keep_dirs: list[str]
 
-def apply(config: PatchConfig_Compress) -> bool:
-    for item in os.listdir(f"{config['src']}/unknown/"):
-        item_path = os.path.join(f"{config['src']}/unknown/", item)
+def apply(patch_config: PatchConfig_Compress) -> bool:
+    path = f"{config['folders']['decompiled']}/unknown"
+    items = os.listdir(path)
 
+    for item in track(
+        items,
+        console=console,
+        description="[COMPRESS]",
+        total=len(items),
+    ):
+        item_path = f"{path}/{item}"
         if os.path.isfile(item_path):
             os.remove(item_path)
-            tqdm.write(f"removed file: {item_path}")
+            log.debug(f"[COMPRESS] removed file: {item_path}")
         elif os.path.isdir(item_path):
-            if item not in config["keep_dirs"]:
+            if item not in patch_config["keep_dirs"]:
                 shutil.rmtree(item_path)
-                tqdm.write(f"removed directory: {item_path}")
+                log.debug(f"[COMPRESS] removed directory: {item_path}")
+
+    log.debug(f"[COMPRESS] resources have been removed")
     return True
