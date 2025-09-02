@@ -2,7 +2,7 @@
 
 # patch settings
 # priority, default: 0
-priority = 0
+priority = 100
 
 # imports
 ## bundled
@@ -11,16 +11,12 @@ import shutil
 import subprocess
 from typing import TypedDict
 
-## installed
-from rich.progress import track
-
 ## custom
-from config import config, log, console
-from scripts.smali_parser import get_smali_lines
+from config import config, log
+from scripts.smali_parser import get_smali_lines, save_smali_lines
+
 
 # Patch
-
-
 class PatchConfig_Compress(TypedDict):
     keep_dirs: list[str]
 
@@ -29,12 +25,7 @@ def remove_files(patch_config: PatchConfig_Compress):
     path = f"{config['folders']['decompiled']}/unknown"
 
     items = os.listdir(path)
-    for item in track(
-        items,
-        console=console,
-        description="[COMPRESS]",
-        total=len(items),
-    ):
+    for item in items:
         item_path = f"{path}/{item}"
         if os.path.isfile(item_path):
             os.remove(item_path)
@@ -56,12 +47,11 @@ def remove_debug_lines():
                 file_content = get_smali_lines(file_path)
                 new_content = []
                 for line in file_content:
-                    if line.find(".line") >= 0:
+                    if line.find(".line") >= 0 or line.find(".source") >= 0:
                         continue
                     new_content.append(line)
+                save_smali_lines(file_path, new_content)
 
-                with open(file_path, "w", encoding="utf-8") as f:
-                    f.writelines(new_content)
             log.debug(f"[COMPRESS] removed debug lines from: {file_path}")
 
 
@@ -115,6 +105,6 @@ def apply(patch_config: PatchConfig_Compress) -> bool:
 
     remove_files(patch_config)
     remove_debug_lines()
-    compress_pngs()
+    # compress_pngs()
 
     return True

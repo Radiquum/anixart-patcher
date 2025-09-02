@@ -1,0 +1,22 @@
+{
+    "base_url": "https://anix-api.wah.su/",
+    "values": [
+        {
+            "file_path": "smali_classes2/com/swiftsoft/anixartd/network/api/ConfigApi.smali",
+            "value": "config/toggles"
+        },
+        {
+            "file_path": "smali_classes2/com/swiftsoft/anixartd/network/api/ProfileApi.smali",
+            "value": "profile/{id}"
+        },
+        {
+            "file_path": "smali_classes2/com/swiftsoft/anixartd/network/api/ReleaseApi.smali",
+            "value": "release/{r_id}"
+        },
+        {
+            "file_path": "smali_classes2/com/swiftsoft/anixartd/network/api/EpisodeApi.smali",
+            "value": "episode/{releaseId}"
+        }
+    ],
+    "constants": []
+}
