@@ -66,9 +66,12 @@ if __name__ == "__main__":
 
     if not args.no_compile:
         compile_apk(f"{apk.removesuffix(".apk")}-patched.apk")
-        sign_apk(f"{apk.removesuffix(".apk")}-patched.apk")
 
     end_time = time()
+
+    if not args.no_compile:
+        sign_apk(f"{apk.removesuffix(".apk")}-patched.apk")
+
 
     log.info("Finished")
     log.info(f"install this apk file: {apk.removesuffix(".apk")}-patched-aligned-signed.apk")
