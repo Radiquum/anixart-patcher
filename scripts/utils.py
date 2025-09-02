@@ -39,7 +39,12 @@ def decompile_apk(apk: str):
             stderr=subprocess.PIPE,
         )
     except subprocess.CalledProcessError as e:
-        log.fatal(f"error of running a command: %s", e.stderr, exc_info=True)
+        log.fatal(
+            f"error of running a command: %s :: %s",
+            f"java -jar {config['folders']['tools']}/apktool.jar d -f -o {config['folders']['decompiled']} {config['folders']['apks']}/{apk}",
+            e.stderr,
+            exc_info=True,
+        )
         exit(1)
 
 
@@ -63,13 +68,22 @@ def compile_apk(apk: str):
             stderr=subprocess.PIPE,
         )
     except subprocess.CalledProcessError as e:
-        log.fatal(f"error of running a command: %s", e.stderr, exc_info=True)
+        log.fatal(
+            f"error of running a command: %s :: %s",
+            f"java -jar {config['folders']['tools']}/apktool.jar b -f -o {config['folders']['dist']}/{apk} {config['folders']['decompiled']}",
+            e.stderr,
+            exc_info=True,
+        )
         exit(1)
 
 
 def sign_apk(apk: str):
     log.info(f"sign and align apk: `{apk}`")
+    command = ""
     try:
+        command = (
+            f"zipalign -p 4 {config['folders']['dist']}/{apk} {config['folders']['dist']}/{apk.removesuffix(".apk")}-aligned.apk",
+        )
         result = subprocess.run(
             f"zipalign -p 4 {config['folders']['dist']}/{apk} {config['folders']['dist']}/{apk.removesuffix(".apk")}-aligned.apk",
             shell=True,
@@ -77,6 +91,10 @@ def sign_apk(apk: str):
             text=True,
             # stdout=subprocess.DEVNULL,
             stderr=subprocess.PIPE,
+        )
+
+        command = (
+            f"apksigner sign --ks ./keystore.jks --out {config['folders']['dist']}/{apk.removesuffix(".apk")}-aligned-signed.apk {config['folders']['dist']}/{apk.removesuffix(".apk")}-aligned.apk",
         )
         result = subprocess.run(
             f"apksigner sign --ks ./keystore.jks --out {config['folders']['dist']}/{apk.removesuffix(".apk")}-aligned-signed.apk {config['folders']['dist']}/{apk.removesuffix(".apk")}-aligned.apk",
@@ -87,5 +105,5 @@ def sign_apk(apk: str):
             stderr=subprocess.PIPE,
         )
     except subprocess.CalledProcessError as e:
-        log.fatal(f"error of running a command: %s", e.stderr, exc_info=True)
+        log.fatal(f"error of running a command: %s :: %s", command, e.stderr, exc_info=True)
         exit(1)
