@@ -8,3 +8,5 @@ dist
 __pycache__
 keystore.jks
 help
+dev_patches
+dev.config.json

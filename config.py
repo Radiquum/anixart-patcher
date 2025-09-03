@@ -1,3 +1,4 @@
+import argparse
 import json
 import logging
 import os
@@ -42,19 +43,26 @@ class Config(TypedDict):
     xml_ns: ConfigXmlNS
 
 
+parser = argparse.ArgumentParser(prog="anixart patcher")
+parser.add_argument("--config", help="path to config.json file", default="config.json")
+parser.add_argument("--no-decompile", action="store_true")
+parser.add_argument("--no-compile", action="store_true")
+parser.add_argument("--patch", action="store_true")
+parser.add_argument("--sign", action="store_true")
+args = parser.parse_args()
+
+
 def load_config() -> Config:
     config = None
 
-    if not os.path.exists("config.json"):
+    if not os.path.exists(args.config):
         log.exception("file `config.json` is not found!")
         exit(1)
 
-    with open("./config.json", "r", encoding="utf-8") as file:
+    with open(args.config, "r", encoding="utf-8") as file:
         config = json.loads(file.read())
 
     log.setLevel(config.get("log_level", "NOTSET").upper())
 
     return config
-
-
 config = load_config()

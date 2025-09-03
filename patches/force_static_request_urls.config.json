@@ -1,5 +1,5 @@
 {
-    "base_url": "https://anix-api.wah.su/",
+    "base_url": "https://api-s.anixsekai.com/",
     "values": [
         {
             "file_path": "smali_classes2/com/swiftsoft/anixartd/network/api/ConfigApi.smali",
