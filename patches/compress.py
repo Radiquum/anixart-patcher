@@ -47,7 +47,7 @@ def remove_debug_lines():
                 file_content = get_smali_lines(file_path)
                 new_content = []
                 for line in file_content:
-                    if line.find(".line") >= 0 or line.find(".source") >= 0:
+                    if line.find(".line") >= 0:
                         continue
                     new_content.append(line)
                 save_smali_lines(file_path, new_content)
