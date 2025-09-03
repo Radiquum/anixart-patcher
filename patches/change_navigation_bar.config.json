@@ -1,0 +1,16 @@
+{
+    "portrait": [
+        "home",
+        "discover",
+        "feed",
+        "bookmarks",
+        "profile"
+    ],
+    "landscape": [
+        "home",
+        "discover",
+        "feed",
+        "bookmarks",
+        "profile"
+    ]
+}
