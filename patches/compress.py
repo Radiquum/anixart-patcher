@@ -18,10 +18,16 @@ from scripts.smali_parser import get_smali_lines, save_smali_lines
 
 # Patch
 class PatchConfig_Compress(TypedDict):
-    keep_dirs: list[str]
+    remove_language_files: bool
+    remove_AI_voiceover: bool
+    remove_debug_lines: bool
+    remove_drawable_files: bool
+    remove_unknown_files: bool
+    remove_unknown_files_keep_dirs: list[str]
+    compress_png_files: bool
 
 
-def remove_files(patch_config: PatchConfig_Compress):
+def remove_unknown_files(patch_config: PatchConfig_Compress):
     path = f"{config['folders']['decompiled']}/unknown"
 
     items = os.listdir(path)
@@ -31,7 +37,7 @@ def remove_files(patch_config: PatchConfig_Compress):
             os.remove(item_path)
             log.debug(f"[COMPRESS] removed file: {item_path}")
         elif os.path.isdir(item_path):
-            if item not in patch_config["keep_dirs"]:
+            if item not in patch_config["remove_unknown_files_keep_dirs"]:
                 shutil.rmtree(item_path)
                 log.debug(f"[COMPRESS] removed directory: {item_path}")
 
@@ -87,7 +93,7 @@ def compress_png(png_path: str):
         exit(1)
 
 
-def compress_pngs():
+def compress_png_files():
     compressed = []
     for root, _, files in os.walk(f"{config['folders']['decompiled']}"):
         if len(files) < 0:
@@ -101,10 +107,190 @@ def compress_pngs():
     log.debug(f"[COMPRESS] {len(compressed)} pngs have been compressed")
 
 
-def apply(patch_config: PatchConfig_Compress) -> bool:
+def remove_AI_voiceover():
+    blank = f"{config['folders']['patches']}/resources/blank.mp3"
+    path = f"{config['folders']['decompiled']}/res/raw"
+    files = [
+        "reputation_1.mp3",
+        "reputation_2.mp3",
+        "reputation_3.mp3",
+        "sound_beta_1.mp3",
+        "sound_create_blog_1.mp3",
+        "sound_create_blog_2.mp3",
+        "sound_create_blog_3.mp3",
+        "sound_create_blog_4.mp3",
+        "sound_create_blog_5.mp3",
+        "sound_create_blog_6.mp3",
+        "sound_create_blog_reputation_1.mp3",
+        "sound_create_blog_reputation_2.mp3",
+        "sound_create_blog_reputation_3.mp3",
+        "sound_create_blog_reputation_4.mp3",
+        "sound_create_blog_reputation_5.mp3",
+        "sound_create_blog_reputation_6.mp3",
+    ]
 
-    remove_files(patch_config)
-    remove_debug_lines()
-    # compress_pngs()
+    for file in files:
+        if os.path.exists(f"{path}/{file}"):
+            os.remove(f"{path}/{file}")
+            shutil.copyfile(blank, f"{path}/{file}")
+            log.debug(f"[COMPRESS] {file} has been replaced with blank.mp3")
+
+    log.debug(f"[COMPRESS] ai voiceover has been removed")
+
+
+def remove_language_files():
+    path = f"{config['folders']['decompiled']}/res"
+    folders = [
+        "values-af",
+        "values-am",
+        "values-ar",
+        "values-as",
+        "values-az",
+        "values-b+es+419",
+        "values-b+sr+Latn",
+        "values-be",
+        "values-bg",
+        "values-bn",
+        "values-bs",
+        "values-ca",
+        "values-cs",
+        "values-da",
+        "values-de",
+        "values-el",
+        "values-en-rAU",
+        "values-en-rCA",
+        "values-en-rGB",
+        "values-en-rIN",
+        "values-en-rXC",
+        "values-es",
+        "values-es-rGT",
+        "values-es-rUS",
+        "values-et",
+        "values-eu",
+        "values-fa",
+        "values-fi",
+        "values-fr",
+        "values-fr-rCA",
+        "values-gl",
+        "values-gu",
+        "values-hi",
+        "values-hr",
+        "values-hu",
+        "values-hy",
+        "values-in",
+        "values-is",
+        "values-it",
+        "values-iw",
+        "values-ja",
+        "values-ka",
+        "values-kk",
+        "values-km",
+        "values-kn",
+        "values-ko",
+        "values-ky",
+        "values-lo",
+        "values-lt",
+        "values-lv",
+        "values-mk",
+        "values-ml",
+        "values-mn",
+        "values-mr",
+        "values-ms",
+        "values-my",
+        "values-nb",
+        "values-ne",
+        "values-nl",
+        "values-or",
+        "values-pa",
+        "values-pl",
+        "values-pt",
+        "values-pt-rBR",
+        "values-pt-rPT",
+        "values-ro",
+        "values-si",
+        "values-sk",
+        "values-sl",
+        "values-sq",
+        "values-sr",
+        "values-sv",
+        "values-sw",
+        "values-ta",
+        "values-te",
+        "values-th",
+        "values-tl",
+        "values-tr",
+        "values-uk",
+        "values-ur",
+        "values-uz",
+        "values-vi",
+        "values-zh",
+        "values-zh-rCN",
+        "values-zh-rHK",
+        "values-zh-rTW",
+        "values-zu",
+        "values-watch",
+    ]
+
+    for folder in folders:
+        if os.path.exists(f"{path}/{folder}"):
+            shutil.rmtree(f"{path}/{folder}")
+            log.debug(f"[COMPRESS] {folder} has been removed")
+
+
+def remove_drawable_files():
+    path = f"{config['folders']['decompiled']}/res"
+    folders = [
+        "drawable-en-hdpi",
+        "drawable-en-ldpi",
+        "drawable-en-mdpi",
+        "drawable-en-xhdpi",
+        "drawable-en-xxhdpi",
+        "drawable-en-xxxhdpi",
+        "drawable-ldrtl-hdpi",
+        "drawable-ldrtl-mdpi",
+        "drawable-ldrtl-xhdpi",
+        "drawable-ldrtl-xxhdpi",
+        "drawable-ldrtl-xxxhdpi",
+        "drawable-tr-anydpi",
+        "drawable-tr-hdpi",
+        "drawable-tr-ldpi",
+        "drawable-tr-mdpi",
+        "drawable-tr-xhdpi",
+        "drawable-tr-xxhdpi",
+        "drawable-tr-xxxhdpi",
+        "drawable-watch",
+        "layout-watch",
+    ]
+
+    for folder in folders:
+        if os.path.exists(f"{path}/{folder}"):
+            shutil.rmtree(f"{path}/{folder}")
+            log.debug(f"[COMPRESS] {folder} has been removed")
+
+
+def apply(patch_config: PatchConfig_Compress) -> bool:
+    if patch_config['remove_unknown_files']:
+        log.info("[COMPRESS] removing unknown files")
+        remove_unknown_files(patch_config)
+    
+    if patch_config["remove_drawable_files"]:
+        log.info("[COMPRESS] removing drawable-xx dirs")
+        remove_drawable_files()
+
+    if patch_config["compress_png_files"]:
+        log.info("[COMPRESS] compressing PNGs")
+        compress_png_files()
+
+    if patch_config["remove_language_files"]:
+        log.info("[COMPRESS] removing languages")
+        remove_language_files()
+
+    if patch_config["remove_AI_voiceover"]:
+        log.info("[COMPRESS] removing AI voiceover")
+        remove_AI_voiceover()
+
+    if patch_config["remove_debug_lines"]:
+        log.info("[COMPRESS] stripping debug lines")
+        remove_debug_lines()
 
     return True

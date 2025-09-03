@@ -1,3 +1,9 @@
 {
-    "keep_dirs": ["META-INF", "kotlin"]
+    "remove_language_files": true,
+    "remove_AI_voiceover": true,
+    "remove_debug_lines": true,
+    "remove_drawable_files": false,
+    "remove_unknown_files": false,
+    "remove_unknown_files_keep_dirs": ["META-INF", "kotlin"],
+    "compress_png_files": false
 }
