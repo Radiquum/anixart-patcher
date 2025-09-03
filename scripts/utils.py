@@ -2,6 +2,7 @@ import os
 import shutil
 import subprocess
 from config import log, config
+from beaupy import prompt
 
 
 def check_java_version():
@@ -80,10 +81,16 @@ def compile_apk(apk: str):
 def sign_apk(apk: str):
     log.info(f"sign and align apk: `{apk}`")
 
-    if os.path.exists(f"{config['folders']['dist']}/{apk.removesuffix('.apk')}-aligned.apk"):
+    if os.path.exists(
+        f"{config['folders']['dist']}/{apk.removesuffix('.apk')}-aligned.apk"
+    ):
         os.remove(f"{config['folders']['dist']}/{apk.removesuffix('.apk')}-aligned.apk")
-    if os.path.exists(f"{config['folders']['dist']}/{apk.removesuffix('.apk')}-aligned-signed.apk"):
-        os.remove(f"{config['folders']['dist']}/{apk.removesuffix('.apk')}-aligned-signed.apk")
+    if os.path.exists(
+        f"{config['folders']['dist']}/{apk.removesuffix('.apk')}-aligned-signed.apk"
+    ):
+        os.remove(
+            f"{config['folders']['dist']}/{apk.removesuffix('.apk')}-aligned-signed.apk"
+        )
 
     command = ""
     try:
@@ -111,5 +118,55 @@ def sign_apk(apk: str):
             stderr=subprocess.PIPE,
         )
     except subprocess.CalledProcessError as e:
-        log.fatal(f"error of running a command: %s :: %s", command, e.stderr, exc_info=True)
+        log.fatal(
+            f"error of running a command: %s :: %s", command, e.stderr, exc_info=True
+        )
         exit(1)
+
+def patch_config_name(patch_name: str) -> str:
+    components = patch_name.split("_")
+    return "PatchConfig_" + "".join(x.title() for x in components)
+
+def init_patch():
+    if not os.path.exists(config["folders"]["patches"]):
+        log.info(f"creating `patches` folder: {config['folders']['patches']}")
+        os.mkdir(config["folders"]["patches"])
+
+    if not os.path.exists(f"{config['folders']['patches']}/__init__.py"):
+        with open(f"{config['folders']['patches']}/__init__.py", "w") as f:
+            f.write("")
+
+    name = prompt("Patch name: ", lambda x: x.strip().lower().replace(" ", "_"))
+    description = prompt("Patch description: ", lambda x: x.strip())
+    priority = prompt("Patch priority: ", target_type=int, initial_value="0")
+
+    patch_content = f"""\"\"\"{description}\"\"\"
+
+# patch settings
+# priority, default: {priority}
+priority = {priority}
+
+# imports
+## bundled
+from typing import TypedDict
+
+## custom
+from config import config, log
+
+
+# Patch
+class {patch_config_name(name)}(TypedDict):
+    pass
+
+
+def apply(patch_conf: {patch_config_name(name)}) -> bool:
+    log.info("patch `{name}` applied, nothing changed")
+    return True
+"""
+    
+    with open(f"{config['folders']['patches']}/{name}.py", "w", encoding="utf-8") as f:
+        f.write(patch_content)
+    with open(f"{config['folders']['patches']}/{name}.config.json", "w", encoding="utf-8") as f:
+        f.write("{}")
+
+    log.info(f"patch `{name}` created")

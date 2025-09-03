@@ -47,8 +47,9 @@ parser = argparse.ArgumentParser(prog="anixart patcher")
 parser.add_argument("--config", help="path to config.json file", default="config.json")
 parser.add_argument("--no-decompile", action="store_true")
 parser.add_argument("--no-compile", action="store_true")
-parser.add_argument("--patch", action="store_true")
-parser.add_argument("--sign", action="store_true")
+parser.add_argument("--patch", action="store_true", help="only patch decompiled")
+parser.add_argument("--sign", action="store_true", help="only sign compiled apk")
+parser.add_argument("--init", action="store_true", help="init a new patch")
 args = parser.parse_args()
 
 
