@@ -28,14 +28,14 @@ class PatchConfig_ChangeColorTheme(TypedDict):
 
 
 def apply(patch_config: PatchConfig_ChangeColorTheme) -> bool:
-    
+
     console.print("select color theme to apply (press [bold]enter[/bold] to confirm)")
     theme = select(patch_config["themes"], cursor="->", cursor_style="cyan")
     if not theme:
         console.print(f"theme: default")
         return False
     console.print(f"theme: {theme}")
-    
+
     theme_attr = patch_config[theme]["attributes"]
     theme_text = patch_config[theme]["text"]
     theme_files = patch_config[theme]["files"]

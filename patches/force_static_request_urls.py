@@ -15,9 +15,6 @@ from scripts.smali_parser import (
     get_smali_lines,
     save_smali_lines,
     find_and_replace_smali_line,
-    find_smali_method_start,
-    find_smali_method_end,
-    replace_smali_method_body,
 )
 
 
@@ -37,14 +34,6 @@ class PatchConfig_ForceStaticRequestUrls(TypedDict):
     base_url: str
     values: PatchConfig_ForceStaticRequestUrlsValue
     constants: PatchConfig_ForceStaticRequestUrlsConst
-
-
-replace_should_use_mirror_urls = """    .locals 0
-
-    const/4 p0, 0x0
-
-    return p0    
-"""
 
 
 def apply(patch_config: PatchConfig_ForceStaticRequestUrls) -> bool:
@@ -71,21 +60,6 @@ def apply(patch_config: PatchConfig_ForceStaticRequestUrls) -> bool:
             save_smali_lines(path, lines)
             log.debug(f"[FORCE_STATIC_REQUEST_URLS] file {path} has been modified")
 
-    # IDK If it is actually needed, will leave it for now, but seems like it should not be needed, since patch is working
-    # path = f"{config['folders']['decompiled']}/smali_classes2/com/swiftsoft/anixartd/Prefs.smali"
-    # if os.path.exists(path):
-    #     lines = get_smali_lines(path)
-    #     new_content = []
-    #     for index, line in enumerate(lines):
-    #         if line.find("SHOULD_USE_MIRROR_URLS") >= 0:
-    #             method_start = find_smali_method_start(lines, index)
-    #             method_end = find_smali_method_end(lines, index)
-    #             new_content = replace_smali_method_body(
-    #                 lines, method_start, method_end, replace_should_use_mirror_urls
-    #             )
-    #     save_smali_lines(path, new_content)
-    #     log.debug(f"[FORCE_STATIC_REQUEST_URLS] file {path} has been modified")
-
     path = f"{config['folders']['decompiled']}/smali_classes2/com/swiftsoft/anixartd/DaggerApp_HiltComponents_SingletonC$SingletonCImpl$SwitchingProvider.smali"
     pathInterceptor = f"{config['folders']['decompiled']}/smali_classes2/com/swiftsoft/anixartd/dagger/module/ApiModule$provideRetrofit$lambda$2$$inlined$-addInterceptor$1.smali"
     if os.path.exists(path) and os.path.exists(pathInterceptor):
@@ -93,10 +67,9 @@ def apply(patch_config: PatchConfig_ForceStaticRequestUrls) -> bool:
         new_content = []
         for index, line in enumerate(lines):
             if line.find("addInterceptor") >= 0:
-                    continue
+                continue
             new_content.append(line)
         save_smali_lines(path, new_content)
         log.debug(f"[FORCE_STATIC_REQUEST_URLS] file {path} has been modified")
-
 
     return True
