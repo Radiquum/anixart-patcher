@@ -44,7 +44,7 @@ def apply(patch_config: PatchConfig_ForceStaticRequestUrls) -> bool:
             path = f"{config['folders']['decompiled']}/{value['file_path']}"
             lines = get_smali_lines(path)
             lines = find_and_replace_smali_line(
-                lines, value["value"], f"{patch_config['base_url']}{value['value']}"
+                lines, f'value = "{value['value']}"', f'value = "{patch_config['base_url']}{value['value']}"'
             )
             save_smali_lines(path, lines)
             log.debug(f"[FORCE_STATIC_REQUEST_URLS] file {path} has been modified")
