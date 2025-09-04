@@ -1,3 +1,24 @@
 {
-    "add_patch_info": true
+    "add_patch_info": true,
+    "main_settings_categories": [
+        {
+            "title": "anixart-patcher",
+            "items": [
+                {
+                    "title": "Radiquum",
+                    "summary": "Разработчик",
+                    "url": "https://radiquum.wah.su/",
+                    "icon": "@drawable/solar_code_2_bold",
+                    "icon_space_reserved": false
+                },
+                {
+                    "title": "Репозиторий",
+                    "summary": "https://github.com/Radiquum/anixart-patcher",
+                    "url": "https://github.com/Radiquum/anixart-patcher",
+                    "icon": "@drawable/github_mark",
+                    "icon_space_reserved": false
+                }
+            ]
+        }
+    ]
 }
