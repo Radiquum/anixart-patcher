@@ -1,5 +1,4 @@
 """Adds used patches and custom menu items to app settings"""
-
 # Developer: Radiquum
 # URL:
 
