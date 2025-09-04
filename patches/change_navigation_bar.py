@@ -1,4 +1,5 @@
 """Move and replace navigation bar tabs"""
+# Developer: Radiquum
 
 # patch settings
 # priority, default: 0

@@ -1,4 +1,6 @@
-"""Adds a patch and other infos to app settings"""
+"""Adds used patches and custom menu items to app settings"""
+# Developer: Radiquum
+# URL:
 
 # patch settings
 # priority, default: -95

@@ -1,4 +1,6 @@
 """Change `value="something/endpoint"` to `value="https://example.com/something/endpoint" """
+# Developer: Radiquum
+# URL:
 
 # patch settings
 # priority, default: 0

@@ -1,4 +1,6 @@
 """Disable ad banners"""
+# Developer: Radiquum, based of code by seele
+# URL:
 
 # patch settings
 # priority, default: 0

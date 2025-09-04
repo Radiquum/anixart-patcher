@@ -1,4 +1,6 @@
 """Remove beta banner"""
+# Developer: Radiquum, based of code by ModdingApps
+# URL:
 
 # patch settings
 # priority, default: 0

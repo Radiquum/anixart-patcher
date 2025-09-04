@@ -1,4 +1,6 @@
 """Change package name"""
+# Developer: Radiquum, based of similar patch by wowlikon
+# URL:
 
 # patch settings
 # priority, default: -100 (run last)

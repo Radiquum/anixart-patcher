@@ -1,4 +1,5 @@
 """Change app color theme"""
+# Developer: Radiquum, themes based on code by Seele
 
 # patch settings
 # priority, default: -99 (run before last)

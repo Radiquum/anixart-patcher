@@ -1,4 +1,6 @@
 """Remove and compress resources"""
+# Developer: Radiquum, based of similar patch by wowlikon
+# URL: https://github.com/Radiquum/anixart-patcher/blob/master/patches/compress.md
 
 # patch settings
 # priority, default: 0
