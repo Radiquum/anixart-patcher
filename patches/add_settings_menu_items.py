@@ -138,7 +138,7 @@ def add_patch_info(patch_statuses: list):
 
             item = create_Preference(
                 patch["name"].replace("_", " ").strip().title(),
-                description=" ".join(description),
+                summary = " ".join(description),
             )
             if url:
                 item.append(create_intent(data=url))
