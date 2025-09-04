@@ -137,10 +137,14 @@ def init_patch():
             f.write("")
 
     name = prompt("Patch name: ", lambda x: x.strip().lower().replace(" ", "_"))
-    description = prompt("Patch description: ", lambda x: x.strip())
+    summary = prompt("Patch summary: ", lambda x: x.strip())
+    developer = prompt("Patch developer: ", lambda x: x.strip())
+    URL = prompt("URL: ", lambda x: x.strip())
     priority = prompt("Patch priority: ", target_type=int, initial_value="0")
 
-    patch_content = f"""\"\"\"{description}\"\"\"
+    patch_content = f"""\"\"\"{summary}\"\"\"
+# Developer: {developer}
+# URL: {URL}
 
 # patch settings
 # priority, default: {priority}

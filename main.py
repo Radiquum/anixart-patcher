@@ -1,7 +1,13 @@
 from scripts.download_tools import check_and_download_all_tools
 from scripts.select_apk import get_apks, select_apk
 from scripts.select_patches import apply_patches, get_patches, select_patches
-from scripts.utils import check_java_version, compile_apk, decompile_apk, sign_apk, init_patch
+from scripts.utils import (
+    check_java_version,
+    compile_apk,
+    decompile_apk,
+    sign_apk,
+    init_patch,
+)
 from config import args, config, log, console
 
 from time import time
@@ -10,9 +16,19 @@ import yaml
 
 
 def patch():
+    app_version: str = None
+    app_build: str = None
+
+    with open(
+        f"{config['folders']['decompiled']}/apktool.yml", "r", encoding="utf-8"
+    ) as f:
+        data = yaml.load(f.read(), Loader=yaml.Loader)
+        app_version = data.get("versionInfo").get("versionName", "None")
+        app_build = data.get("versionInfo").get("versionCode", 0)
+
     patches = get_patches()
     patches = select_patches(patches)
-    statuses = apply_patches(patches)
+    statuses = apply_patches(patches, app_version, int(app_build))
 
     statuses_ok = []
     statuses_err = []

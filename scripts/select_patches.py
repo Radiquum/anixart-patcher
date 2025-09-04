@@ -69,7 +69,29 @@ progress = Progress(
 )
 
 
-def apply_patches(patches: list[str]) -> list[PatchStatus]:
+def get_patch_config(
+    patch_name: str,
+    all_patch_statuses: list,
+    app_version: str,
+    app_build: int,
+) -> dict:
+    _config = {}
+    if os.path.exists(f"{config['folders']['patches']}/{patch_name}.config.json"):
+        with open(
+            f"{config['folders']['patches']}/{patch_name}.config.json",
+            "r",
+            encoding="utf-8",
+        ) as f:
+            _config = json.loads(f.read())
+    _config["_internal_all_patch_statuses"] = all_patch_statuses
+    _config["_internal_app_version"] = app_version
+    _config["_internal_app_build"] = app_build
+    return _config
+
+
+def apply_patches(
+    patches: list[str], app_version: str, app_build: int
+) -> list[PatchStatus]:
     modules = []
     statuses = []
 
@@ -84,19 +106,7 @@ def apply_patches(patches: list[str]) -> list[PatchStatus]:
         task = progress.add_task("applying patch:", total=len(modules), patch="")
         for module in modules:
             progress.update(task, patch=module.name)
-
-            patch_conf = {}
-            if os.path.exists(
-                f"{config['folders']['patches']}/{module.name}.config.json"
-            ):
-                with open(
-                    f"{config['folders']['patches']}/{module.name}.config.json",
-                    "r",
-                    encoding="utf-8",
-                ) as f:
-                    patch_conf = json.loads(f.read())
-
-            status = module.apply(patch_conf)
+            status = module.apply(get_patch_config(module.name, statuses, app_version, app_build))
             statuses.append({"name": module.name, "status": status})
             progress.update(task, advance=1)
 
