@@ -1,5 +1,5 @@
 {
-    "base_url": "https://api-s.anixsekai.com/",
+    "base_url": "",
     "values": [
         {
             "file_path": "smali_classes2/com/swiftsoft/anixartd/network/api/ConfigApi.smali",
@@ -16,6 +16,18 @@
         {
             "file_path": "smali_classes2/com/swiftsoft/anixartd/network/api/EpisodeApi.smali",
             "value": "episode/{releaseId}"
+        },
+        {
+            "file_path": "smali_classes2/com/swiftsoft/anixartd/network/api/EpisodeApi.smali",
+            "value": "episode/{releaseId}/{typeId}"
+        },
+        {
+            "file_path": "smali_classes2/com/swiftsoft/anixartd/network/api/EpisodeApi.smali",
+            "value": "episode/{releaseId}/{typeId}/{sourceId}"
+        },
+        {
+            "file_path": "smali_classes2/com/swiftsoft/anixartd/network/api/EpisodeApi.smali",
+            "value": "episode/target/{releaseId}/{sourceId}/{position}"
         }
     ],
     "constants": []

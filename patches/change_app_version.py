@@ -54,7 +54,7 @@ def apply(patch_conf: PatchConfig_ChangeAppVersion) -> bool:
 
         for filename in files:
             file_path = os.path.join(root, filename)
-            if os.path.isfile(file_path) and filename.endswith(".smali"):
+            if os.path.isfile(file_path) and filename.endswith(".smali") and filename not in ["DeviceInfoUtil.smali"]:
                 file_contents = None
                 with open(file_path, "r", encoding="utf-8") as file:
                     file_contents = file.read()
@@ -80,7 +80,7 @@ def apply(patch_conf: PatchConfig_ChangeAppVersion) -> bool:
                         patch_conf["version_name"] or patch_conf["_internal_app_version"],
                     )
                     log.debug(f"replaced version name in file: {file_path}")
-                    log.debug(f"previous: {patch_conf["_internal_app_build"]}")
+                    log.debug(f"previous: {patch_conf["_internal_app_version"]}")
                     log.debug(f"replaced: {patch_conf["version_code"]}")
 
                 with open(file_path, "w", encoding="utf-8") as file:
